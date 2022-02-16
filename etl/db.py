@@ -1,3 +1,6 @@
+import datetime
+from select import select
+from sqlite3 import Cursor
 from .logs import die
 from geoalchemy2 import Geometry, WKTElement
 import sqlalchemy as sql
@@ -27,21 +30,10 @@ class DBController:
         """
         try:
             con = sql.create_engine(self.uri)
-            df = pd.read_sql(query, con)
+            select_df = pd.read_sql(query, con, parse_dates={ "date_temp": {"format": "%Y-%m-%d"}, "date_noise" : {"format": "%Y-%m-%d"}, "date_hum" : {"format": "%Y-%m-%d"}})
         except Exception as e:
             die(f"select_data: {e}")
-        return df
-
-    def querying_existing(self): 
-
-        """This functions abstracts the `SELECT` queries
-
-        Args:
-            query (str): the select query to be executed
-
-        Returns:
-            pd.DataFrame: the selection
-        """
+        return select_df
 
     def insert_data(self, df: pd.DataFrame, schema: str, table: str, chunksize: int=100) -> None:
         """This function abstracts the `INSERT` queries
@@ -74,15 +66,60 @@ class DBController:
             df (pd.DataFrame): dataframe to be inserted
             schema (str): the name of the schema
             table (str): the name of the table
-            chunksize (int): the number of rows to insert at the time
         """
         try:
             engine = sql.create_engine(self.uri)
             with engine.connect() as con:
                 tran = con.begin()
-                gdf.to_postgis(name=table, schema=schema, con=con, if_exists="fail", index=False)
+                gdf.to_postgis(name=table, schema=schema, con=con, if_exists="replace", index=False)
                 tran.commit()
         except Exception as e:
             if 'tran' in locals():
                 tran.rollback()
             die(f"{e}")
+    
+    # def querydata(self, initial_date: datetime, final_date: datetime)-> pd.DataFrame: 
+
+    #     """This functions abstracts the `SELECT` queries
+
+    #     Args:
+    #         initial_date (date): the initial date to be used in the query to be executed
+    #         final_date (date)
+    #     Returns:
+    #         pd.DataFrame: the selection
+    #     """
+    #     try:
+    #         engine = sql.create_engine(self.uri)
+    #         #cursor = engine.cursor()
+    #         dates = initial_date , final_date
+
+    #         sql_statement = """select * from us.env_variables 
+    #                         where (date_temp >= :initial_date 
+    #                         or date_noise >= :initial_date or date_hum >= :initial_date)
+    #                         and (date_temp <= :final_date 
+    #                         or date_noise <= :final_date or date_hum <= :final_date)"""
+            
+            
+    #         result = engine.execute(sql_statement, dates )
+
+    #         for r in result:  
+    #             print(r)
+            
+
+    #         #query_df = pd.read_sql(cursor)
+    #         #cursor.close()
+    #         #engine.close()
+    #     except Exception as e:
+    #         die(f"query_data: {e}")
+        
+        #return query_df
+
+
+
+
+
+
+# Read
+#result_set = db.execute("SELECT * FROM films")  
+#for r in result_set:  
+#    print(r)

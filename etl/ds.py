@@ -2,10 +2,10 @@ from .logs import die
 #import requests
 import pandas as pd
 import geopandas as gpd
-#import csv
+import datetime
 
 def read_json(url: str) -> pd.DataFrame:
-    """Reads a CSV into a Pandas dataframe
+    """Reads a JSON into a Pandas dataframe
 
     Args:
         fname (str): the name of the CSV file
@@ -22,9 +22,7 @@ def read_json(url: str) -> pd.DataFrame:
         die(f"read_json: {e}")
     return df
 
-def read_geojson(
-     fname: str
- ) -> gpd.GeoDataFrame:
+def read_geojson(fname: str) -> gpd.GeoDataFrame:
      """Reads a Geojson into a GeoPandas dataframe
 
      Args:
@@ -42,29 +40,3 @@ def read_geojson(
      return gdf
 
 
-# def write_csv(
-#     df: pd.DataFrame,
-#     fname: str,
-#     sep: str = ",",
-#     quotechar: str = '"',
-# ) -> None:
-#     """ Writes a Pandas dataframe into a CSV
-
-#     Args:
-#         df (pd.DataFrame): the dataframe
-#         fname (str): the file name
-#         sep (str, optional): the character delimiter. Defaults to ",".
-#         quotechar (str, optional): the character for quotes. Defaults to '"'.
-#     """
-#     try:
-#         df.to_csv(
-#             fname,
-#             sep=sep,
-#             quotechar=quotechar,
-#             header=True,
-#             index=False,
-#             index_label=False,
-#             quoting=csv.QUOTE_NONNUMERIC,
-#         )
-#     except Exception as e:
-#         die(f"write_csv: {e}")

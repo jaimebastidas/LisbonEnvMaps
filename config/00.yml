@@ -3,7 +3,7 @@ database:
   host: localhost
   port: 5432
   username: postgres
-  password: novaims
+  password: postgres
 url: http://opendata-cml.qart.pt/lastmeasurements
 fname_stations: stations_lisbon.geojson
 fname_fraguesias: fraguesias.geojson
