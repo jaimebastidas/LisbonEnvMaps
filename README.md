@@ -24,19 +24,7 @@ You can read more about ETL [here](https://en.wikipedia.org/wiki/Extract,_transf
 
 ## Data
 
-We'll be using the [NYC taxi dataset](https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page). 
 
-## Questions
 
-1. How many rides took place on each day of January?
-2. What is the average fare amount for rides with only one passenger in the first two weeks?
-3. How many rides of each rate type took place in the month of January?
-4. For each airport, 
-    * How rides there? 
-    * What's the average ride duration? 
-    * What's the average cost? 
-    * What's the average tip? 
-    * What's the min, average and max number of passengers?
-5. How many rides took place every 5 minutes for the first day of 2016?
-6. How many rides on New Year’s morning originated from within 400m of Times Square, in 30 minute buckets?
+
 
