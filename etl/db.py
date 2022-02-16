@@ -1,6 +1,9 @@
 from .logs import die
+from geoalchemy2 import Geometry, WKTElement
 import sqlalchemy as sql
 import pandas as pd
+import geopandas as gpd
+
 
 
 class DBController:
@@ -58,6 +61,26 @@ class DBController:
                     con=con, if_exists="append", index=False,
                     chunksize=chunksize, method="multi"
                 )
+                tran.commit()
+        except Exception as e:
+            if 'tran' in locals():
+                tran.rollback()
+            die(f"{e}")
+    
+    def insert_geodata(self, gdf: gpd.GeoDataFrame, schema: str, table: str) -> None:
+        """This function abstracts the `INSERT` queries
+
+        Args:
+            df (pd.DataFrame): dataframe to be inserted
+            schema (str): the name of the schema
+            table (str): the name of the table
+            chunksize (int): the number of rows to insert at the time
+        """
+        try:
+            engine = sql.create_engine(self.uri)
+            with engine.connect() as con:
+                tran = con.begin()
+                gdf.to_postgis(name=table, schema=schema, con=con, if_exists="fail", index=False)
                 tran.commit()
         except Exception as e:
             if 'tran' in locals():

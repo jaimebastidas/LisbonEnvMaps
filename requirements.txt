@@ -7,3 +7,4 @@ geopandas==0.10.2
 PyYAML==6.0
 SQLAlchemy==1.4.31
 psycopg2-binary==2.9.3
+geoalchemy2==0.10.2

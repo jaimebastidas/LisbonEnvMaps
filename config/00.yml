@@ -5,18 +5,8 @@ database:
   username: postgres
   password: novaims
 url: http://opendata-cml.qart.pt/lastmeasurements
-columns:
-- pickup_datetime
-- dropoff_datetime
-- pickup_latitude
-- pickup_longitude
-- dropoff_latitude
-- dropoff_longitude
-- passenger_count
-- total_amount
-- payment_type
-- rate_code
-fname: stations_lisbon.geojson
+fname_stations: stations_lisbon.geojson
+fname_fraguesias: fraguesias.geojson
 period:
   start_date: '2021-01-01'
   end_date: '2021-01-02'

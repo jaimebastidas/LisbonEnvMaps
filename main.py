@@ -5,11 +5,12 @@ import sys
 import pandas as pd
 import numpy as np
 import geopandas as gpd
-from shapely.geometry import point
 
 
 DB_SCHEMA = "ods"
 TABLE = "originaldata"
+TABLE_STATIONS = 'sensors_points'
+TABLE_FRAGUESIAS = 'fraguesias'
 #DOWNLOAD_DIR = "data/original"
 #PROCESSED_DIR = "data/processed"
 STATIC_DIR = "data/static"
@@ -98,8 +99,8 @@ def transformation(config: dict, df: pd.DataFrame) -> pd.DataFrame:
     print(hum_df.shape)
     
     # importing stations file from static data
-    fname = config["fname"]
-    gdf = e.read_geojson(f"{STATIC_DIR}/{fname}")
+    stations = config["fname_stations"]
+    gdf = e.read_geojson(f"{STATIC_DIR}/{stations}")
     print(gdf.head())
     
     
@@ -167,6 +168,7 @@ def load(config: dict, env_var: pd.DataFrame, chunksize: int=1000) -> None:
 
     Args:
         config (dict): configuration dictionary
+        env_var (string): returned dataframe from transformation operation
         chunksize (int): the number of rows to be inserted at one time
     """
     t0 = time.time()
@@ -174,19 +176,50 @@ def load(config: dict, env_var: pd.DataFrame, chunksize: int=1000) -> None:
     print(env_var.head())
 
     try:
-#        fname = config["fname"]
-        db = e.DBController(**config["database"])
+
+        connection = e.DBController(**config["database"])
         e.info("LOAD: READING DATA")
     
-    #    df = e.read_csv(f"{PROCESSED_DIR}/{fname}")
         e.info("LOAD: DATA READ")
         e.info("LOAD: INSERTING DATA INTO DATABASE")
-        db.insert_data(env_var, DB_SCHEMA, TABLE, chunksize=chunksize)
+        connection.insert_data(env_var, DB_SCHEMA, TABLE, chunksize=chunksize)
+
+
+        
         e.info("LOAD: DONE")
         t1 = time.time()
         e.info("LOADING TIME: " + str(t1-t0) + " seconds")
     except Exception as err:
         e.die(f"LOAD: {err}")
+
+def load_geodata(config: dict) -> None:
+
+    """Runs load_geodata
+
+    Args:
+        config (dict): configuration dictionary
+    
+    """      
+    e.info("UPLOADING GEOJSON FILES TO DATABASE")
+
+    sensors = config["fname_stations"]
+    gdf_sensors = e.read_geojson(f"{STATIC_DIR}/{sensors}")
+
+    neighborhood = config["fname_fraguesias"]
+    gdf_fraguesias = e.read_geojson(f"{STATIC_DIR}/{neighborhood}")
+
+
+    try:
+        connection = e.DBController(**config["database"])
+        
+        connection.insert_geodata(gdf_sensors, DB_SCHEMA, TABLE_STATIONS)
+        e.info("UPLOADED SENSOR STATIONS POINTS")
+        connection.insert_geodata(gdf_fraguesias, DB_SCHEMA, TABLE_FRAGUESIAS)
+        e.info("UPLOADED FRAGUESIAS POLYGONS")
+
+    except Exception as err:
+        e.die(f"LOAD: {err}")
+
 
 
 def parse_args() -> str:
@@ -213,6 +246,8 @@ def main(config_file: str) -> None:
     env_var = transformation(config, df)
     
     load(config, env_var, chunksize=10000)
+    
+    load_geodata(config)
     
 
 if __name__ == "__main__":
