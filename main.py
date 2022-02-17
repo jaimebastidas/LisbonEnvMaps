@@ -84,13 +84,13 @@ def transformation(config: dict, df: pd.DataFrame) -> pd.DataFrame:
     
     
     # print("temp removed columns")
-    # print(temp_df.head())
+    print(temp_df.head())
     # print(temp_df.shape)
     # print("noise removed columns")
-    # print(noise_df.head())
+    print(noise_df.head())
     # print(noise_df.shape)
     # print("humidity removed columns")
-    # print(hum_df.head())
+    print(hum_df.head())
     # print(hum_df.shape)
     
     # importing stations file from static data
@@ -103,20 +103,43 @@ def transformation(config: dict, df: pd.DataFrame) -> pd.DataFrame:
     columns_to_drop1 = ['address', 'geometry']
     stations_df = stations_df.drop(columns=columns_to_drop1)
 
-    #print(stations_df.head())
+    print(stations_df.head())
 
 
     stations_merged1 = pd.merge(stations_df, temp_df, how='left', on='id_sensor')
-    stations_merged1.rename(columns={'value': 'temp_value','date': 'date_temp'}, inplace=True)
+    #stations_merged1.rename(columns={'value': 'temp_value','date': 'date_temp'}, inplace=True)
+    stations_merged1.rename(columns={'value': 'temp_value'}, inplace=True)
 
     stations_merged2 = pd.merge(stations_merged1, noise_df, how='left', on='id_sensor')
-    stations_merged2.rename(columns={'value': 'noise_value','date': 'date_noise'}, inplace=True)
+    stations_merged2.rename(columns={'value': 'noise_value'}, inplace=True)
 
     stations_env_variables = pd.merge(stations_merged2, hum_df, how='left', on='id_sensor')
-    stations_env_variables.rename(columns={'value': 'hum_value','date': 'date_hum'}, inplace=True)
+    stations_env_variables.rename(columns={'value': 'hum_value'}, inplace=True)
     
+    #stations_env_variables['New_date'] = stations_env_variables.apply(lambda x: x['New_date'] if pd.notnull(x['date_x']) or pd.notnull(x['date_y']) or pd.notnull(x['date']) else np.nan, axis=1)
 
-    # print(stations_env_variables.head())
+    #  stations_env_variables.apply(lambda x: x['New_date'] if pd.notnull(x['date_x']) or pd.notnull(x['date_y']) or pd.notnull(x['date']) else np.nan, axis=1)
+    
+    #stations_env_variables['New_date'] = (stations_env_variables['date_x'] | stations_env_variables['date_y']  | stations_env_variables['date'], np.nan)
+    
+     
+
+    if stations_env_variables['date_x'].notnull():
+        stations_env_variables['new_date'] = stations_env_variables['date_x']
+    elif stations_env_variables['date_y'].notnull():
+        stations_env_variables['new_date'] = stations_env_variables['date_y']
+    elif stations_env_variables['date'].notnull():
+        stations_env_variables['new_date'] = stations_env_variables['date']
+        
+        
+    #     | stations_env_variables['date_y'].notnull() | stations_env_variables['date'].notnull()):
+
+         
+    
+    #stations_env_variables['New_date'] = if stations_env_variables['date_x'].notnull() | stations_env_variables['date_y'].notnull() | stations_env_variables['date'].notnull()
+    #bool_series = pd.notnull(data["Gender"])
+
+    print(stations_env_variables.head(n=50))
     # print(stations_env_variables.shape)
     
     # print(stations_env_variables.dtypes)
@@ -186,9 +209,12 @@ def load_geodata(config: dict) -> None:
     except Exception as err:
         e.die(f"LOAD GEODATA: {err}")
 
+
 def querydata(config: dict, initial_date: str, final_date: str) -> pd.DataFrame:
 
-    query = 'select * from us.env_variables'
+    query = f'''select id_sensor, avg(temp_value) as temp, avg(noise_value) from us.env_variables 
+               where date >= {initial_date} and date < {final_date}
+               group by id_sensor'''
     
     try:
         connection = e.DBController(**config["database"])
@@ -257,7 +283,7 @@ def sum_variables(config: dict, filtered_df:pd.DataFrame) -> list:
 
     return list_geogdf
 
-def plot_maps(list_geo):
+#def plot_maps(list_geo):
 
 
 
@@ -300,27 +326,27 @@ def main(config_file: str) -> None:
 
     
     config = e.read_config(config_file)
-    try:
-        df = extraction(config)
+    #try:
+    df = extraction(config)
 
-        env_var = transformation(config, df)
+    env_var = transformation(config, df)
 
-        load(config, env_var, chunksize=10000)
+    load(config, env_var, chunksize=10000)
     
-        load_geodata(config)
+    load_geodata(config)
 
-    except:
-        e.info("EXTRACTION WAS NO POSSIBLE, PROGRAM CONTINUES WITHOUT EXTRACTING THE MOST RECENT DATA")
+    #except:
+    #    e.info("EXTRACTION WAS NO POSSIBLE, PROGRAM CONTINUES WITHOUT EXTRACTING THE MOST RECENT DATA")
     
     e.info("EXECUTING QUERY FOR SELECTED DATES")
 
-    filtered_df = querydata(config, initial_date, final_date)
+    #filtered_df = querydata(config, initial_date, final_date)
 
-    e.info("SUMMARIZING ENV VARIABLES FOR MAPS")
+    #e.info("SUMMARIZING ENV VARIABLES FOR MAPS")
 
-    list_geo = sum_variables(config, filtered_df)
+    #list_geo = sum_variables(config, filtered_df)
 
-    plot_maps(list_geo)
+    #plot_maps(list_geo)
 
     #map_df_temp = sum_variables(filtered_df)
 
