@@ -30,7 +30,7 @@ class DBController:
         """
         try:
             con = sql.create_engine(self.uri)
-            select_df = pd.read_sql(query, con, parse_dates={ "date_temp": {"format": "%Y-%m-%d"}, "date_noise" : {"format": "%Y-%m-%d"}, "date_hum" : {"format": "%Y-%m-%d"}})
+            select_df = pd.read_sql(query, con, parse_dates={ "date": {"format": "%Y-%m-%d"}})
         except Exception as e:
             die(f"select_data: {e}")
         return select_df
