@@ -1,18 +1,16 @@
 /*
-    The purpose of the trigger is to insert into the pa.rides every time a new record is inserted
-    in sa.rides. Plus, the longitude and latitude are converted into PostGIS datatypes.
+    The purpose of the trigger is to insert into the env_variables table rides every time a new record is inserted
+    in originaldata table. Also, using postgis spatial function of intersection the env_variables get the address of the sensor and the fraguesia's name.
 */
 CREATE FUNCTION ods.insert_data()
 RETURNS TRIGGER AS
 $$
 BEGIN
-	INSERT INTO us.env_variables(id_sensor, date_temp, temp_value, date_noise, noise_value, date_hum, hum_value, freguesia, address)
-	VALUES (new.id_sensor, 
-			new.date_temp, 
-			new.temp_value, 
-			new.date_noise, 
-			new.noise_value, 
-			new.date_hum, 
+	INSERT INTO us.env_variables(id_sensor, date, temp_value, noise_value, hum_value, freguesia, address)
+	VALUES (new.id_sensor,
+			new.date,
+			new.temp_value,  
+			new.noise_value,  
 			new.hum_value, 
 			(select ST_intersection(f.geometry, sp.geometry), new.f."NOME" from  ods.fraguesias f, ods.sensors_points sp 
 			where ST_Intersects(f.geometry, sp.geometry)),

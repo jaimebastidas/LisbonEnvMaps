@@ -128,7 +128,6 @@ def load(config: dict, env_var: pd.DataFrame, chunksize: int=1000) -> None:
 
         connection = e.DBController(**config["database"])
         e.info("LOAD: READING DATA")
-    
         e.info("LOAD: DATA READ")
         e.info("LOAD: INSERTING DATA INTO DATABASE")
         connection.insert_data(env_var, DB_SCHEMA, TABLE, chunksize=chunksize)

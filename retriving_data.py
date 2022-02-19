@@ -1,4 +1,5 @@
 from fileinput import filename
+from turtle import width
 import etl as e
 import argparse
 import time
@@ -16,6 +17,7 @@ from osgeo import gdal
 
 STATIC_DIR = "data/static"
 PLOTS = "data/plots"
+TEMP = "data/tifs"
 
 
 
@@ -23,7 +25,7 @@ def querydata(config: dict, initial_date: str, final_date: str) -> pd.DataFrame:
 
     query = f'''select id_sensor, avg(temp_value) as temp,  avg(noise_value) as noise, avg(hum_value) as humidity 
                 from us.env_variables 
-                where date > {initial_date} and date < {final_date}
+                where date >= {initial_date} and date <= {final_date}
                 group by id_sensor'''
     
     try:
@@ -31,7 +33,7 @@ def querydata(config: dict, initial_date: str, final_date: str) -> pd.DataFrame:
         
         query_df = connection.select_data(query)
 
-        #print(query_df.head())
+        print(query_df.head())
 
         # print(query_df.shape)
         
@@ -53,9 +55,10 @@ def sum_variables(config: dict, filtered_df:pd.DataFrame) -> list:
     sensors = config["fname_stations"]
     gdf_sensors = e.read_geojson(f"{STATIC_DIR}/{sensors}")
 
+    gdf_sensors = gdf_sensors.to_crs(epsg=4326)
         
     geo_temp = gdf_sensors.merge(temp, on = 'id_sensor')
-    
+  
     geo_temp = geo_temp[['id_sensor', 'lat', 'long', 'geometry', 'temp']]
 
     geo_noise = gdf_sensors.merge(noise, on = 'id_sensor')
@@ -91,31 +94,43 @@ def plot_maps(list_geo):
     i = 0
     for m in list_geo:
 
-        m = m.to_crs("EPSG:27429")
+        #m = m.to_crs("EPSG:27429")
 
 
 
         i = i+1 
         filename = (str(i) + '.tif')
 
+        
+
         zvalue = m.columns[-1]
 
-        #bounds = m.total_bounds
-        bounds =  [491852.55724386,
-                                4293589.0484153,
-                                481739.61788112,
-                                4284064.37306832]
+        bounds = m.total_bounds
+        #bounds =  [491852.55724386,
+        #                        4293589.0484153,
+        #                       481739.61788112,
+        #                       4284064.37306832]
 
         print(bounds)
 
-        input = gdal.OpenEx(m.to_json(), gdal.OF_VECTOR)
+        pixel_size = 10
 
-        IDW_gdal = gdal.Grid(filename, input ,zfield=zvalue, 
-               algorithm = "invdist",
-               outputBounds = bounds,
-               #outputSRS="EPSG:27429", 
-               width = 20, height = 20)
-               
+        width = round((bounds[2] - bounds[0])/pixel_size)
+        height = round((bounds[3] - bounds[1])/pixel_size)
+
+        #opt = gdal.GridOptions(format="GTiff", width=width, height=height, outputBounds=bounds, outputSRS="EPSG:27429", algorithm="invdist", zfield=zvalue)
+
+        input = gdal.OpenEx(m.to_json(), gdal.OF_VECTOR)
+       
+
+        #IDW_gdal = gdal.Grid(f"{PLOTS}/{filename}", input ,outputSRS = "EPSG:27429", zfield = zvalue, algorithm = "invdist", outputBounds = bounds, width = 20, height = 20)
+
+        #IDW_gdal = gdal.Grid(f"{PLOTS}/{filename}", input, zfield = zvalue, algorithm = "invdist", outputBounds = bounds, width = 20, height = 20)
+        
+        IDW_gdal = gdal.Grid(f"{TEMP}/{filename}", input, format="GTiff", width=width, height=height, outputBounds=bounds, algorithm="invdist", zfield=zvalue)
+
+        #IDW_gdal_reproyected = 
+
         #outputBounds = [ulx, uly,   lrx,        lry],
 
         # ds = gdal.Grid('result.tif', 'points.shp', format='GTiff',
@@ -182,8 +197,8 @@ def main(config_file: str) -> None:
     
     args = parser.parse_args()
 
-    initial_date = "'2022-02-15'" if not args.initial_date else args.initial_date
-    final_date = "'2022-02-18'" if not args.final_date else args.final_date
+    initial_date = "'2022-02-12'" if not args.initial_date else args.initial_date
+    final_date = "'2022-02-14'" if not args.final_date else args.final_date
 
     
     config = e.read_config(config_file)
