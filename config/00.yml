@@ -7,6 +7,4 @@ database:
 url: http://opendata-cml.qart.pt/lastmeasurements
 fname_stations: stations_lisbon.geojson
 fname_fraguesias: fraguesias.geojson
-period:
-  start_date: '2021-01-01'
-  end_date: '2021-01-02'
+fname_report: Env_Lisbon_report.pdf

@@ -12,7 +12,7 @@ DB_SCHEMA = "ods"
 TABLE = "originaldata"
 TABLE_STATIONS = 'sensors_points'
 TABLE_FRAGUESIAS = 'fraguesias'
-STATIC_DIR = """D://NOVAIMS//2021-2022//Programming_Seminar//GPS_project//Code//data//static"""
+STATIC_DIR = """D:\NOVAIMS\2021-2022\Programming_Seminar\GPS_project\Code\data\static"""
 
 
 def extraction(config: dict) -> pd.DataFrame:

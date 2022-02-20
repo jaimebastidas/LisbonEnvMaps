@@ -1,0 +1,9 @@
+@echo  Running ETL for Lisbon Environment reports
+@echo  ---------------------
+@echo off
+
+cmd /k "cd D:\NOVAIMS\2021-2022\Programming_Seminar\GPS_project\lisbon\Scripts & activate & cd /d  D:\NOVAIMS\2021-2022\Programming_Seminar\GPS_project\Code & python main.py"
+
+@echo Pulse any key
+pause>nul
+exit
