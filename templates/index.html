@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+        <title>
+		prueba reporte
+        </title>
+    </head>
+    <body>
+        <div class="content">
+        <h3>
+            Diligenciar el formulario
+        </h3>
+        <p>
+            <form action="/getreport" method="post">
+         		Fecha inicio:<br>
+         		<input type="date" id="fi" name="fi"><br>
+         		Fecha fin:<br>
+         		<input type="date" id="ff" name="ff"><br>
+				<input type="submit" value="Obtener">
+            </form>
+        </p>    
+    </div>   
+</canvas>   
+<script>
+var n = document.getElementById("Image")
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+ctx.font = "30px Arial";
+ctx.fillText(n, 10, 50);
+</script>        
+    </body>
+</html>
