@@ -28,12 +28,11 @@ Running the application
 • Run Env_API.py in the console to start the program.
 • Indicate the initial and final date indicating the selected period of interest.
 
-# [Env_Lisbon_report.pdf](https://github.com/jhoneric/LisbonEnvMaps/files/8119738/Env_Lisbon_report.pdf)
-Output and Visualization.
+
+# Output and Visualization.
 Using the Python based end-user data retrieval file, the analytical report is presented on a map in pdf format together with the average values recorded by the various sensors
 
-
-
+![hum map](https://user-images.githubusercontent.com/99036519/155208685-308f501f-bc61-4aef-a4a2-c7212cc85b5d.JPG)
 
 
 
