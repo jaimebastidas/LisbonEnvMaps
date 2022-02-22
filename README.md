@@ -19,7 +19,10 @@ The main objective is to use several open-source resources to build a solution a
 ___________________________________________________________________________________________
 # Data /Database 
 The data comes from “camera municipal de Lisboa” “lisboa-aberta” (http://lisboaaberta.cmlisboa.pt/index.php/pt/dados/conjuntos-de-dados) with sensors deployed in 80 locations for monitoring the environmental parameters across Lisbon municipality which were aggregated on a daily basis.The database contains variables populated through the Python code and then stored in a table within a SQL database. The first table contains information about the environmental variables, such as their full name, ID and date. In the same database, there is another table that defines the environmental variables, such as their full name, ID and date as well as the sensor ID freguesia and address, which is the user interface. The database is updated every day by a schedular that runs every six (6) hours initiated by the ETL process.
+
+
 # System Requirements (How To Run The App)
+
 •Python 3.10.2 or later.
 • The following modules installed:  asyncio, constants, fiona , bounds, etl as e,  argparse, time, os, sys, pandas as pd, numpy as np, plotly. express as px,  geopandas as gpd, datetime, gdal,  rasterio, matplotlib. pyplot as plt pathlib, contextily .
 • Postgress database.
