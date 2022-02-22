@@ -26,4 +26,18 @@ The data comes from “camera municipal de Lisboa” “lisboa-aberta” (http:/
 • User interface.
 Running the application
 • Run Env_API.py in the console to start the program.
-• PS: while the web browser is loading, info messages are being printed in the python console.
+• Indicate the initial and final date indicating the selected period of interest.
+
+# [Env_Lisbon_report.pdf](https://github.com/jhoneric/LisbonEnvMaps/files/8119738/Env_Lisbon_report.pdf)
+Output and Visualization.
+Using the Python based end-user data retrieval file, the analytical report is presented on a map in pdf format together with the average values recorded by the various sensors
+
+
+
+
+
+
+
+
+
+
