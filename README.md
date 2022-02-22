@@ -26,17 +26,11 @@ ________________________________________________________________________________
 The data comes from “camera municipal de Lisboa” “lisboa-aberta” (http://lisboaaberta.cmlisboa.pt/index.php/pt/dados/conjuntos-de-dados) with sensors deployed in 80 locations for monitoring the environmental parameters across Lisbon municipality which were aggregated on a daily basis.  
 The database contains variables populated through the Python code and then stored in a table within a SQL database. The first table contains information about the environmental variables, such as their full name, ID and date. In the same database, there is another table that defines the environmental variables, such as their full name, ID and date as well as the sensor ID freguesia and address, which is the user interface. The database is updated every day by a schedular that runs every six (6) hours initiated by the ETL process.
 
-* Perform all extraction, transformation and loading without quering the user; 
-* Report the current state of the process, and in case of error;
-* Be able to deal with the incomming of new data.
-
-You can read more about ETL [here](https://en.wikipedia.org/wiki/Extract,_transform,_load).
-
 # SYSTEM REQUIREMENTS (HOW TO RUN THE APP)
-•	Python 3.10.2 or later.
-•	The following modules installed:  asyncio, constants, fiona , bounds, etl as e,  argparse, time, os, sys, pandas as pd, numpy as np, plotly. express as px,  geopandas as gpd, datetime, gdal,  rasterio, matplotlib. pyplot as plt pathlib, contextily .
-•	Postgress database.
-•	User interface.
+•Python 3.10.2 or later.
+• The following modules installed:  asyncio, constants, fiona , bounds, etl as e,  argparse, time, os, sys, pandas as pd, numpy as np, plotly. express as px,  geopandas as gpd, datetime, gdal,  rasterio, matplotlib. pyplot as plt pathlib, contextily .
+• Postgress database.
+• User interface.
 Running the application
-•	Run Env_API.py in the console to start the program.
-•	PS: while the web browser is loading, info messages are being printed in the python console.
+• Run Env_API.py in the console to start the program.
+• PS: while the web browser is loading, info messages are being printed in the python console.
